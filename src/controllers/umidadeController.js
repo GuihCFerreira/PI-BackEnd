@@ -1,31 +1,68 @@
 const controller = {};
+const umidadeService = require('../service/umidadeService')
 
 const {getDataAtual} = require('../util/dateUtil');
 const {getHoraAtual} = require('../util/timeUtil');
 
-controller.atual = async function(req, res){
-    res.status(200).json({"mensagem":"ta ligado u"})
+controller.getUmidadeAtual = async function(req, res){
+    
+    try {
+        
+        const umid = await umidadeService.getUmidadeAtual();
+        res.status(200).json(umid)
+
+    } catch (error) {
+        
+        console.log(error);
+        res.status(500).json({"erro":error})
+
+    }
+
 }
 
-controller.lista = async function(req, res){
-    res.status(200).json({"mensagem":"ta ligado 2 u"})
+controller.getUmidadeHistorico = async function(req, res){
+    
+    try {
+        
+        const umid = await umidadeService.getUmidadeHistorico();
+        res.status(200).json(umid)
+
+    } catch (error) {
+        
+        console.log(error);
+        res.status(500).json({"erro":error})
+
+    }
+
 }
 
-controller.criar = async function(req, res){
+controller.createUmidadeIOT = async function(req, res){
 
-    const umidade = req.body.umidade;
+    const {umidade, unidadeMedida} = req.query;
     const data = getDataAtual();
     const hora = getHoraAtual();
 
-    if(!umidade) return res.status(422).json({"erro": "Dever ser informado o valor da pressão."});
+    if(!umidade && !unidadeMedida) return res.status(422).json({"erro": "Dever ser informado o valor da umidade e a unidade de medida."});
 
-    const umididaObj= {
+    const umidadeObj ={
         umidade,
+        unidadeMedida,
         data,
         hora
     }
 
-    res.status(201).json({"mensagem":"ta criado u"}) 
+    try{
+
+        const umid = await umidadeService.createUmidade(umidadeObj);
+        res.status(201).json(umid);
+
+    }catch(error){
+
+        console.log(error);
+        res.status(500).json({"erro": error});
+
+    }
+
 }
 
 module.exports = controller;

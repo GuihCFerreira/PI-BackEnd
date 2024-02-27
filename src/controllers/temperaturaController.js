@@ -4,37 +4,33 @@ const temperaturaService = require('../service/temperaturaService');
 const {getDataAtual} = require('../util/dateUtil');
 const {getHoraAtual} = require('../util/timeUtil');
 
-controller.atual = async function(req, res){
-    res.status(200).json({"mensagem":"ta ligado"})
-}
+controller.getTemperaturaAtual = async function(req, res){
+    
+    try{
 
-controller.lista = async function(req, res){
-    res.status(200).json({"mensagem":"ta ligado 2"})
-}
+        const temp = await temperaturaService.getTemperaturaAtual();
+        res.status(200).json(temp)
 
-controller.criar = async function(req, res){
+    }catch(error){
 
-    const temperatura = req.body.temperatura;
-    const data = getDataAtual();
-    const hora = getHoraAtual();
+        console.log(error);
+        res.status(500).json({"erro:": error});
 
-    if(!temperatura) return res.status(422).json({"erro": "Dever ser informado o valor da temperatura."});
-
-    const temperaturaObj = {
-        temperatura,
-        data,
-        hora
     }
 
-    try {
+}
 
-        const temp = await temperaturaService.createTemperatura(temperaturaObj);
-        res.status(201).json(temp)
-        
-    } catch (error) {
-        
+controller.getTemperaturaHistorico = async function(req, res){
+
+    try{
+
+        const temp = await temperaturaService.getTemperaturaHistorico();
+        res.status(200).json(temp)
+
+    }catch(error){
+
         console.log(error);
-        res.status(500).json({"erro": error});
+        res.status(500).json({"erro:": error});
 
     }
 }
@@ -57,10 +53,13 @@ controller.createTemperaturaIOT = async function (req, res){
     try{
 
         const temp = await temperaturaService.createTemperatura(temperaturaObj);
-        res.status(200).json(temp);
+        res.status(201).json(temp);
 
     }catch(error){
+
         console.log(error);
+        res.status(500).json({"erro": error});
+
     }
 
 }
