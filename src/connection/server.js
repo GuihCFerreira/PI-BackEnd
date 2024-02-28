@@ -3,8 +3,8 @@ const cors = require('cors');
 const db = require('../database/connectDb');
 
 //const routes = require('../routes/indexRouter');
-const temperaturaRoutes = require('../routes/temperaturaRoutes');
-const umidadeRoutes = require('../routes/umidadeRoutes');
+const temperaturaController = require('../controllers/temperaturaController');
+const umidadeController = require('../controllers/umidadeController');
 
 const server = express();
 
@@ -18,8 +18,13 @@ server.use(
 );
 
 //server.use(routes);
-server.use('/temperatura', temperaturaRoutes);
-server.use('/umidade', umidadeRoutes);
+server.get('/temperatura/getTemperaturaAtual', temperaturaController.getTemperaturaAtual);
+server.get('/temperatura/getTemperaturaHistorico', temperaturaController.getTemperaturaHistorico);
+server.get('/temperatura/createTemperaturaIOT', temperaturaController.createTemperaturaIOT);
+
+server.get('/umidade/getUmidadeAtual', umidadeController.getUmidadeAtual);
+server.get('/umidade/getUmidadeHistorico', umidadeController.getUmidadeHistorico);
+server.get('/umidade/createUmidadeIOT', umidadeController.createUmidadeIOT);
 
 const initServer = ()=> {
     db.connectDatabase();
